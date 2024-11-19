@@ -1,20 +1,12 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-      .then((_) {
-    runApp(const MainApp());
-  });
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -22,7 +14,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomePage());
+    return const MaterialApp(
+        debugShowCheckedModeBanner: false, home: HomePage());
   }
 }
 
@@ -48,42 +41,6 @@ class _HomePageState extends State<HomePage> {
 
   final double altBotao = 90.0;
   final double largBotao = 200.0;
-
-  // void updateNumeroEscolhido() {
-  //   while (listaNumeros[numeroEscolhido] != '' &&
-  //       numeroEscolhido < listaNumeros.length - 1 &&
-  //       listaNumeros.contains('')) {
-  //     setState(() {
-  //       numeroEscolhido =
-  //           (numeroEscolhido + 1) % (listaNumeros.length - 1); //soma circular
-  //     });
-  //   }
-  // }
-
-  // void updateNumeroEscolhido() {
-  //   setState(() {
-  //     do {
-  //       debugPrint("Dentro do loop");
-  //       numeroEscolhido = (numeroEscolhido + 1) % (listaNumeros.length - 1);
-  //     } while (numeroEscolhido < listaNumeros.length &&
-  //         listaNumeros[numeroEscolhido] != '');
-  //   });
-  // }
-
-  void updateNumeroEscolhido() {
-    int proximoNumero = numeroEscolhido;
-    // Avança para o próximo índice vazio, se existir.
-    for (int i = 0; i < listaNumeros.length; i++) {
-      debugPrint("Dentro do loop");
-      proximoNumero = (proximoNumero + 1) % listaNumeros.length;
-      if (listaNumeros[proximoNumero] == '') {
-        break;
-      }
-    }
-    setState(() {
-      numeroEscolhido = proximoNumero;
-    });
-  }
 
   @override
   void initState() {
@@ -124,7 +81,7 @@ class _HomePageState extends State<HomePage> {
       // Seleciona aleatoriamente os índices para esconder os números
       while (indicesRemover.length < numerosParaRemover) {
         int indice = Random().nextInt(listaNumeros.length);
-        if (indice != 0 && !indicesRemover.contains(indice)) {
+        if (indice != 0 && indice != 9 && !indicesRemover.contains(indice)) {
           indicesRemover.add(indice);
           listaNumeros[indice] = '';
           listaBooleanaNumeros[indice] = false;
@@ -146,111 +103,129 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(children: [
-          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                    height: 573,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: Column(
-                      children: [
-                        Wrap(
-                          spacing: 5,
-                          alignment: WrapAlignment.center,
-                          children: List.generate(
-                            3,
-                            (index) => quadradoSelecionado(index),
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 5,
-                          alignment: WrapAlignment.center,
-                          children: List.generate(
-                            3,
-                            (index) => quadradoSelecionado(index + 3),
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 5,
-                          alignment: WrapAlignment.center,
-                          children: List.generate(
-                            3,
-                            (index) => quadradoSelecionado(index + 6),
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 5,
-                          alignment: WrapAlignment.center,
-                          children: List.generate(
-                            1,
-                            (index) => quadradoSelecionado(index + 9),
-                          ),
-                        ),
-                      ],
-                    )),
-              ],
+          Opacity(
+            opacity: 0.3,
+            child: Image.asset(
+              'assets/background_app.png',
+              fit: BoxFit.cover, // Garante que a imagem cubra o fundo
+              width: double.infinity, // Preenche a largura
+              height: double.infinity, // Preenche a altura
             ),
-
-            SizedBox(
-                height: 140,
-                width: MediaQuery.of(context).size.width * 0.9,
-                child: Column(
-                  children: [
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      children: List.generate(
-                        listaOpcoesNumeros.length,
-                        (index) => quadradoOpcoesNumeros(index),
+          ),
+          SafeArea(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      const SizedBox(height: 80),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              Wrap(
+                                spacing: 5,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(
+                                  5,
+                                  (index) => quadradoSelecionado(index),
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              Wrap(
+                                spacing: 5,
+                                alignment: WrapAlignment.center,
+                                children: List.generate(
+                                  5,
+                                  (index) => quadradoSelecionado(index + 5),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                )),
-            // GestureDetector(
-            //     onTapDown: (TapDownDetails details) {
-            //       setState(() {
-            //         botaoLevantado = true;
-            //       });
-            //     },
-            //     onTapUp: (TapUpDetails details) {
-            //       setState(() {
-            //         botaoLevantado = false;
-            //       });
-            //     },
-            //     onTap: () async {
-            //       if (listEquals(gabarito, listaNumeros)) {
-            //         debugPrint("Parabéns você venceu!!");
-            //         _confettiController.play();
-            //         await Future.delayed(Duration(milliseconds: 500));
+                      const SizedBox(height: 120),
+                      Column(
+                        children: [
+                          Wrap(
+                            spacing: 5,
+                            alignment: WrapAlignment.center,
+                            children: List.generate(
+                              listaOpcoesNumeros.length,
+                              (index) => quadradoOpcoesNumeros(index),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        setState(() {
+                          botaoLevantado = true;
+                        });
+                      },
+                      onTapUp: (TapUpDetails details) {
+                        setState(() {
+                          botaoLevantado = false;
+                        });
+                      },
+                      onTap: () {
+                        try {
+                          if (listEquals(gabarito, listaNumeros)) {
+                            debugPrint("Parabéns você venceu!!");
+                            debugPrint("Sequência correta detectada!");
 
-            //         gerarSequenciaNumerica();
-            //         tornarBotoesVisiveis();
-            //       } else {
-            //         debugPrint("Ops, você errou!");
-            //         setState(() {
-            //           listaNumeros = List.from(listaInicial);
-            //         });
-            //         debugPrint(listaNumeros.toString());
-            //       }
-            //     },
-            //     child: botaoClashRoyale(altBotao: altBotao, largBotao: largBotao)
-            //         .animate(
-            //           target: botaoLevantado ? 1 : 0,
-            //           onPlay: (controller) => controller.repeat(),
-            //         )
-            //         .scaleXY(
-            //             curve: Curves.linear,
-            //             duration: Duration(milliseconds: 130),
-            //             begin: 1.0,
-            //             end: 0.9)),
-          ]),
+                            _confettiController.play();
+                            debugPrint("Iniciando nova sequência");
+                            gerarSequenciaNumerica();
+                            tornarBotoesVisiveis();
+                          } else {
+                            debugPrint("Ops, você errou!");
+                            setState(() {
+                              listaNumeros = List.from(listaInicial);
+                            });
+                            debugPrint(listaNumeros.toString());
+                          }
+                        } catch (e) {
+                          debugPrint(e.toString());
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Container(
+                          height: 70,
+                          width: 70,
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow_rounded,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        )
+                            .animate(
+                              target: botaoLevantado ? 1 : 0,
+                              onPlay: (controller) => controller.repeat(),
+                            )
+                            .scaleXY(
+                                curve: Curves.linear,
+                                duration: const Duration(milliseconds: 90),
+                                begin: 1.0,
+                                end: 0.9),
+                      )),
+                ]),
+          ),
           Align(
             alignment: Alignment.center,
             child: ConfettiWidget(
               confettiController: _confettiController,
               blastDirectionality: BlastDirectionality.explosive,
               numberOfParticles: 30,
-              emissionFrequency: 0.05,
+              emissionFrequency: 0.02,
               gravity: 0.1,
             ),
           ),
@@ -278,73 +253,124 @@ class _HomePageState extends State<HomePage> {
                   });
                 },
                 feedback: Container(
-                  height: 70,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color.fromARGB(255, 255, 76, 136),
-                      width: 2,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      listaNumeros[numero],
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          decoration: TextDecoration.none),
-                    ),
-                  ),
-                ),
-                childWhenDragging: Container(
-                  height: 70,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: listaBooleanaNumeros[numero] == false
-                          ? Color.fromARGB(255, 255, 76, 136)
-                          : Color.fromARGB(255, 56, 8, 159),
-                      width: 2,
-                    ),
-                  ),
-                ),
-                child: SizedBox(
-                  height: 143,
-                  width: listaNumeros[numero] != '10' ? 70 : 150,
-                  child: Center(
-                    child: Text(
-                      listaNumeros[numero],
-                      style:
-                          TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                    height:
+                        80, //Eu diminui o tamanho, para dar efeito. O tam original era 100
+                    width: 50, //O tam original era 60
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(7),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(3, 4),
+                            spreadRadius: 3.5,
+                            // blurStyle: BlurStyle.solid
+                          ),
+                          BoxShadow(
+                            offset: Offset(-1, -1),
+                            spreadRadius: 2,
+                            // blurStyle: BlurStyle.solid
+                          ),
+                        ]),
+                    child: Center(
+                      child: Text(
+                        listaNumeros[numero],
+                        style: const TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            decoration: TextDecoration.none),
+                        textAlign: TextAlign.center,
+                      ),
+                    )),
+                //Como fica o widget debaixo quando eu estou arrastando ele
+                childWhenDragging: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: SizedBox(
+                    child: Container(
+                      height: 100,
+                      width: 60,
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade800.withOpacity(0.5),
+                          shape: BoxShape.circle),
                     ),
                   ),
                 ),
-              ) //Ele parado por padrão
-            : SizedBox(
-                height: 143,
-                width: listaNumeros[numero] != '10' ? 70 : 150,
-                child: listaNumeros[numero] != ''
-                    ? Center(
+                //Ele parado apos ter botado um numero
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Container(
+                      height: 100,
+                      width: 60,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(7),
+                          boxShadow: const [
+                            BoxShadow(
+                              offset: Offset(3, 4),
+                              spreadRadius: 3.5,
+                              // blurStyle: BlurStyle.solid
+                            ),
+                            BoxShadow(
+                              offset: Offset(-1, -1),
+                              spreadRadius: 2,
+                              // blurStyle: BlurStyle.solid
+                            ),
+                          ]),
+                      child: Center(
                         child: Text(
                           listaNumeros[numero],
-                          style: TextStyle(
-                              fontSize: 100, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              decoration: TextDecoration.none),
                           textAlign: TextAlign.center,
                         ),
-                      )
-                    : Center(
-                        child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            shape: BoxShape.circle),
                       )),
-              );
+                ),
+              ) //Quadrado ja estabelecidos por padrao
+            : listaNumeros[numero] != ''
+                ? Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                        height: 100,
+                        width: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(7),
+                            boxShadow: const [
+                              BoxShadow(
+                                offset: Offset(3, 4),
+                                spreadRadius: 3.5,
+                                // blurStyle: BlurStyle.solid
+                              ),
+                              BoxShadow(
+                                offset: Offset(-1, -1),
+                                spreadRadius: 2,
+                                // blurStyle: BlurStyle.solid
+                              ),
+                            ]),
+                        child: Center(
+                          child: Text(
+                            listaNumeros[numero],
+                            style: const TextStyle(
+                                fontSize: 50, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        )),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: SizedBox(
+                      child: Container(
+                        height: 100,
+                        width: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade800.withOpacity(0.5),
+                            shape: BoxShape.circle),
+                      ),
+                    ),
+                  );
       },
     );
   }
@@ -370,44 +396,64 @@ class _HomePageState extends State<HomePage> {
           });
         },
         feedback: Container(
-          height: 70,
-          width: 70,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                  color: const Color.fromARGB(255, 255, 76, 136), width: 2)),
-          child: Center(
-            child: Text(
-              listaOpcoesNumeros[numero],
-              //numeroString,
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  decoration: TextDecoration.none),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        child: Visibility(
-          visible: visibilidadeOpcoesNumeros[numero],
-          child: Container(
-            height: 70,
-            width: 70,
+            height: 80,
+            width: 50,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                    color: const Color.fromARGB(255, 255, 76, 136), width: 2)),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(7),
+                boxShadow: const [
+                  BoxShadow(
+                    offset: Offset(3, 4),
+                    spreadRadius: 3.5,
+                    // blurStyle: BlurStyle.solid
+                  ),
+                  BoxShadow(
+                    offset: Offset(-1, -1),
+                    spreadRadius: 2,
+                    // blurStyle: BlurStyle.solid
+                  ),
+                ]),
             child: Center(
               child: Text(
                 listaOpcoesNumeros[numero],
-                //numeroString,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    decoration: TextDecoration.none),
                 textAlign: TextAlign.center,
               ),
-            ),
-          ),
-        ),
+            )),
+        child: Visibility(
+            visible: visibilidadeOpcoesNumeros[numero],
+            child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Container(
+                    height: 100,
+                    width: 60,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(7),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(3, 4),
+                            spreadRadius: 3.5,
+                            // blurStyle: BlurStyle.solid
+                          ),
+                          BoxShadow(
+                            offset: Offset(-1, -1),
+                            spreadRadius: 2,
+                            // blurStyle: BlurStyle.solid
+                          ),
+                        ]),
+                    child: Center(
+                      child: Text(
+                        listaOpcoesNumeros[numero],
+                        style: const TextStyle(
+                            fontSize: 50, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    )))),
       ),
     );
   }
@@ -429,9 +475,9 @@ class botaoClashRoyale extends StatelessWidget {
       height: altBotao,
       width: largBotao,
       decoration: BoxDecoration(
-        color: Color.fromARGB(239, 254, 25, 29),
+        color: const Color.fromARGB(239, 254, 25, 29),
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
               color: Color.fromARGB(238, 185, 17, 20),
               offset: Offset(0, 4),
@@ -446,12 +492,12 @@ class botaoClashRoyale extends StatelessWidget {
             height: altBotao - 15,
             width: 185,
             decoration: BoxDecoration(
-                color: Color.fromARGB(255, 254, 25, 28),
+                color: const Color.fromARGB(255, 254, 25, 28),
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                       color: Colors.black.withOpacity(0.2),
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                       blurRadius: 1,
                       spreadRadius: 0.3)
                 ]),
@@ -463,7 +509,7 @@ class botaoClashRoyale extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 255, 135, 126)
                         .withOpacity(0.7),
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10)),
                   ),
@@ -474,7 +520,7 @@ class botaoClashRoyale extends StatelessWidget {
                       width: 8,
                       decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.8),
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(4),
                             topRight: Radius.circular(10),
                             bottomLeft: Radius.circular(10),
@@ -496,7 +542,7 @@ class botaoClashRoyale extends StatelessWidget {
                 ..color = Colors.black,
             ),
           ),
-          Text(
+          const Text(
             "Responder",
             style: TextStyle(
                 fontSize: 30,
@@ -568,6 +614,3 @@ class botaoClashRoyale extends StatelessWidget {
 //                         )
 //                       ],
 //                     ),
-
-
-
