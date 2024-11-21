@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:sequencia_numerica/dados_provider.dart';
+import 'package:sequencia_numerica/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,20 +19,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: HomePage());
+    return MaterialApp(routes: {
+      '/jogo': (context) => const GamePage(),
+      '/home': (context) => const HomePage(),
+    }, debugShowCheckedModeBanner: false, home: const HomePage());
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class GamePage extends StatefulWidget {
+  const GamePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<GamePage> createState() => _GamePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late DadosController _dadosController;
+class _GamePageState extends State<GamePage> {
+  //late DadosController _dadosController;
 
   late ConfettiController _confettiController;
   bool botaoLevantado = false;
@@ -41,13 +42,18 @@ class _HomePageState extends State<HomePage> {
   final double altBotao = 90.0;
   final double largBotao = 200.0;
 
+  final Color corEscura = Colors.lightBlue.shade400;
+  final Color corFundo = Colors.white;
+  final Color corTexto = Colors.black;
+  //final Color corTexto = Colors.lightBlue.shade400;
+
   @override
   void initState() {
     super.initState();
 
-    _dadosController = Get.find<DadosController>();
-    _dadosController.gerarSequenciaNumerica();
-    _dadosController.tornarBotoesVisiveis();
+    // _dadosController = Get.find<DadosController>();
+    // _dadosController.gerarSequenciaNumerica();
+    // _dadosController.tornarBotoesVisiveis();
 
     // gerarSequenciaNumerica();
     // // Inicializa a lista de visibilidade com todos os itens visíveis
@@ -56,11 +62,11 @@ class _HomePageState extends State<HomePage> {
         ConfettiController(duration: const Duration(seconds: 1));
   }
 
-  @override
-  void dispose() {
-    _confettiController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _confettiController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,15 +145,20 @@ class _HomePageState extends State<HomePage> {
                                 botaoLevantado = false;
                               });
                             },
-                            onTap: () {
+                            onTap: () async {
+                              debugPrint("Apertou o botão");
                               try {
                                 if (listEquals(_.gabarito, _.listaNumeros)) {
                                   debugPrint("Parabéns você venceu!!");
                                   debugPrint("Sequência correta detectada!");
 
                                   _confettiController.play();
+
                                   debugPrint("Iniciando nova sequência");
+
                                   _.gerarSequenciaNumerica();
+
+                                  debugPrint("Passou do sufoco ja");
                                   _.tornarBotoesVisiveis();
                                 } else {
                                   debugPrint("Ops, você errou!");
@@ -192,8 +203,10 @@ class _HomePageState extends State<HomePage> {
                     confettiController: _confettiController,
                     blastDirectionality: BlastDirectionality.explosive,
                     numberOfParticles: 30,
-                    emissionFrequency: 0.02,
-                    gravity: 0.1,
+                    emissionFrequency: 0.01,
+                    gravity: 0.4,
+                    maxBlastForce: 30,
+                    minBlastForce: 10,
                   ),
                 ),
               ]));
@@ -224,16 +237,20 @@ class _HomePageState extends State<HomePage> {
                               80, //Eu diminui o tamanho, para dar efeito. O tam original era 100
                           width: 50, //O tam original era 60
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: corFundo,
                               borderRadius: BorderRadius.circular(7),
-                              boxShadow: const [
+                              boxShadow: [
                                 BoxShadow(
-                                  offset: Offset(3, 4),
+                                  color: corEscura,
+
+                                  offset: const Offset(3, 4),
                                   spreadRadius: 3.5,
                                   // blurStyle: BlurStyle.solid
                                 ),
                                 BoxShadow(
-                                  offset: Offset(-1, -1),
+                                  color: corEscura,
+
+                                  offset: const Offset(-1, -1),
                                   spreadRadius: 2,
                                   // blurStyle: BlurStyle.solid
                                 ),
@@ -241,11 +258,7 @@ class _HomePageState extends State<HomePage> {
                           child: Center(
                             child: Text(
                               _.listaNumeros[numero],
-                              style: const TextStyle(
-                                  fontSize: 50,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  decoration: TextDecoration.none),
+                              style: estiloTexto(corTexto),
                               textAlign: TextAlign.center,
                             ),
                           )),
@@ -269,16 +282,19 @@ class _HomePageState extends State<HomePage> {
                             height: 100,
                             width: 60,
                             decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: corFundo,
                                 borderRadius: BorderRadius.circular(7),
-                                boxShadow: const [
+                                boxShadow: [
                                   BoxShadow(
-                                    offset: Offset(3, 4),
+                                    color: corEscura,
+                                    offset: const Offset(3, 4),
                                     spreadRadius: 3.5,
                                     // blurStyle: BlurStyle.solid
                                   ),
                                   BoxShadow(
-                                    offset: Offset(-1, -1),
+                                    color: corEscura,
+
+                                    offset: const Offset(-1, -1),
                                     spreadRadius: 2,
                                     // blurStyle: BlurStyle.solid
                                   ),
@@ -286,11 +302,7 @@ class _HomePageState extends State<HomePage> {
                             child: Center(
                               child: Text(
                                 _.listaNumeros[numero],
-                                style: const TextStyle(
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    decoration: TextDecoration.none),
+                                style: estiloTexto(corTexto),
                                 textAlign: TextAlign.center,
                               ),
                             )),
@@ -307,17 +319,17 @@ class _HomePageState extends State<HomePage> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(7),
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
-                                      color: Colors.blue.shade600,
-                                      offset: const Offset(3, 4),
+                                      color: Colors.black,
+                                      offset: Offset(3, 4),
                                       spreadRadius: 3.5,
                                       // blurStyle: BlurStyle.solid
                                     ),
                                     BoxShadow(
-                                      color: Colors.blue.shade600,
+                                      color: Colors.black,
 
-                                      offset: const Offset(-1, -1),
+                                      offset: Offset(-1, -1),
                                       spreadRadius: 2,
                                       // blurStyle: BlurStyle.solid
                                     ),
@@ -325,8 +337,8 @@ class _HomePageState extends State<HomePage> {
                               child: Center(
                                 child: Text(
                                   _.listaNumeros[numero],
-                                  style: TextStyle(
-                                      color: Colors.blue.shade300,
+                                  style: const TextStyle(
+                                      color: Colors.black,
                                       fontSize: 50,
                                       fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
@@ -373,16 +385,18 @@ class _HomePageState extends State<HomePage> {
                   height: 80,
                   width: 50,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: corFundo,
                       borderRadius: BorderRadius.circular(7),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          offset: Offset(3, 4),
+                          color: corEscura,
+                          offset: const Offset(3, 4),
                           spreadRadius: 3.5,
                           // blurStyle: BlurStyle.solid
                         ),
                         BoxShadow(
-                          offset: Offset(-1, -1),
+                          color: corEscura,
+                          offset: const Offset(-1, -1),
                           spreadRadius: 2,
                           // blurStyle: BlurStyle.solid
                         ),
@@ -390,11 +404,7 @@ class _HomePageState extends State<HomePage> {
                   child: Center(
                     child: Text(
                       _.listaOpcoesNumeros[numero],
-                      style: const TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          decoration: TextDecoration.none),
+                      style: estiloTexto(corTexto),
                       textAlign: TextAlign.center,
                     ),
                   )),
@@ -406,16 +416,20 @@ class _HomePageState extends State<HomePage> {
                           height: 100,
                           width: 60,
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: corFundo,
                               borderRadius: BorderRadius.circular(7),
-                              boxShadow: const [
+                              boxShadow: [
                                 BoxShadow(
-                                  offset: Offset(3, 4),
+                                  color: corEscura,
+
+                                  offset: const Offset(3, 4),
                                   spreadRadius: 3.5,
                                   // blurStyle: BlurStyle.solid
                                 ),
                                 BoxShadow(
-                                  offset: Offset(-1, -1),
+                                  color: corEscura,
+
+                                  offset: const Offset(-1, -1),
                                   spreadRadius: 2,
                                   // blurStyle: BlurStyle.solid
                                 ),
@@ -423,8 +437,7 @@ class _HomePageState extends State<HomePage> {
                           child: Center(
                             child: Text(
                               _.listaOpcoesNumeros[numero],
-                              style: const TextStyle(
-                                  fontSize: 50, fontWeight: FontWeight.bold),
+                              style: estiloTexto(corTexto),
                               textAlign: TextAlign.center,
                             ),
                           )))),
@@ -434,15 +447,36 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+TextStyle estiloTexto(Color corTexto) {
+  return TextStyle(
+      color: corTexto,
+      fontSize: 50,
+      fontWeight: FontWeight.bold,
+      decoration: TextDecoration.none,
+      shadows: const [
+        // Shadow(
+        //   color: Colors.black,
+        //   offset: Offset(1, 7),
+        // ),
+        // Shadow(
+        //   color: Colors.black,
+        //   offset: Offset(1, 5),
+        // ),
+      ]);
+}
+
+// ignore: camel_case_types
 class botaoClashRoyale extends StatelessWidget {
   const botaoClashRoyale({
     super.key,
     required this.altBotao,
     required this.largBotao,
+    required this.texto,
   });
 
   final double altBotao;
   final double largBotao;
+  final String texto;
 
   @override
   Widget build(BuildContext context) {
@@ -506,7 +540,7 @@ class botaoClashRoyale extends StatelessWidget {
                 )),
           ),
           Text(
-            "Responder",
+            texto,
             style: TextStyle(
               fontSize: 30,
               // color: Colors.white,
@@ -517,9 +551,9 @@ class botaoClashRoyale extends StatelessWidget {
                 ..color = Colors.black,
             ),
           ),
-          const Text(
-            "Responder",
-            style: TextStyle(
+          Text(
+            texto,
+            style: const TextStyle(
                 fontSize: 30,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
